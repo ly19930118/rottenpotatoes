@@ -1,5 +1,10 @@
 class MoviesController < ApplicationController
-
+  #before_filter :load_ratings, :only => :index
+  
+  #def load_ratings
+  #  @all_ratings = Movie.find_all_ratings
+  #end
+  
   def show
     id = params[:id] # retrieve movie ID from URI route
     @movie = Movie.find(id) # look up movie by unique ID
@@ -7,12 +12,31 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if params.has_key?(:foo)
-      @movies = Movie.order(:title)
-    elsif params.has_key?(:boo)
-      @movies = Movie.order(:release_date)
+    @all_ratings = Movie.find_all_ratings
+    session[:sort_by] = params[:sort_by] if params[:sort_by]
+    
+    if params.has_key?(:ratings) 
+      session[:ratings] = params[:ratings]
+      @checked_ratings = params[:ratings].keys
     else
-      @movies = Movie.all
+      if session[:ratings]
+        @checked_ratings = session[:ratings].keys
+        flash.keep
+        redirect_to movies_path(:sort_by =>session[:sort_by] ,:ratings => session[:ratings])
+      else
+        @checked_ratings = @all_ratings
+      end
+    end
+    
+    if params.has_key?(:sort_by)
+      if params[:sort_by] == 'title'
+        @title_header = 'hilite'
+      elsif params[:sort_by] == 'release_date'
+        @rdate_header = 'hilite'
+      end
+      @movies = Movie.order(params[:sort_by]).where('rating IN (?)', @checked_ratings)
+    else
+      @movies = Movie.where('rating IN (?)', @checked_ratings)
     end
   end
 
@@ -43,5 +67,5 @@ class MoviesController < ApplicationController
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
   end
-
+  
 end
