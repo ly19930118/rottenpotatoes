@@ -19,3 +19,9 @@ end
 
 gem 'jquery-rails'
 gem 'haml'
+
+group :development,:test do  
+  # ... other gems
+  gem 'database_cleaner'
+  gem 'cucumber-rails', :require => false
+end
