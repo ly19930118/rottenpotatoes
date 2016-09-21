@@ -6,6 +6,8 @@ gem 'rails', '3.2.16'
 group :development, :test do
   gem 'sqlite3'
   gem 'ruby-debug19'
+  gem 'database_cleaner'
+  gem 'cucumber-rails', :require => false
 end
 
 
@@ -20,8 +22,3 @@ end
 gem 'jquery-rails'
 gem 'haml'
 
-group :development,:test do  
-  # ... other gems
-  gem 'database_cleaner'
-  gem 'cucumber-rails', :require => false
-end
