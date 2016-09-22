@@ -18,7 +18,7 @@ Then /I should see "(.*)" before "(.*)"/ do |e1, e2|
   #flunk "Unimplemented"
   within('table[id=movies]') do
     collected_movies = all('td[id=movie_title]').collect(&:text)
-    assert collected_movies.index(e1) < collected_movies.index(e2)
+    assert(collected_movies.index(e1) < collected_movies.index(e2), e1.to_s + "should before " + e2.to_s)
   end
 end
 
@@ -57,7 +57,7 @@ Then /I should see movies with ratings: (.*)/ do |rating_list|
   within('table[id=movies]') do
     collected_ratings = all('td[id=movie_rating]').collect(&:text)
     rating_list.split(',').each do |r|
-      assert collected_ratings.include? r
+      assert(collected_ratings.include? r,"should have rating: " + r.to_s)
     end
   end
 end
@@ -67,7 +67,7 @@ Then /I should not see movies with ratings: (.*)/ do |rating_list|
   within('table[id=movies]') do
     collected_ratings = all('td[id=movie_rating]').collect(&:text)
     rating_list.split(',').each do |r|
-      assert collected_ratings.exclude? r
+      assert(collected_ratings.exclude? r, "should not have rating: " + r.to_s)
     end
   end
 end
@@ -86,4 +86,10 @@ Then /I should see all the movies/ do
     collected_movies_size = all('td[id=movie_title]').collect(&:text).size
     assert(collected_movies_size == expected_size, collected_movies_size.to_s + " does not equal " + expected_size.to_s)
   end
+end
+
+Then(/^the director of "([^"]*)" should be "([^"]*)"$/) do |arg1, arg2|
+  # Write code here that turns the phrase above into concrete actions
+  m = Movie.find_by_title(arg1)
+  assert(arg2 == m.director, "director should be" + arg2.to_s + "instead of " + m.director.to_s)
 end
